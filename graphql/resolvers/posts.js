@@ -1,10 +1,11 @@
+const { AuthenticationError, UserInputError } = require('apollo-server');
 const Post = require('../../models/Post');
 const checkAuth = require('../../util/check-auth');
 module.exports = {
   Query: {
     async getPosts() {
       try {
-        const posts = await Post.find();
+        const posts = await Post.find().sort({ createdAt: -1 });
         return posts;
       } catch (err) {
         throw new Error(err);
@@ -24,7 +25,7 @@ module.exports = {
     },
   },
   Mutation: {
-    async createdPost(_, { body }, context) {
+    createPost: async (_, { body }, context) => {
       const user = checkAuth(context);
 
       const newPost = new Post({
@@ -36,6 +37,40 @@ module.exports = {
       const post = await newPost.save();
 
       return post;
+    },
+    deletePost: async (_, { postId }, context) => {
+      const user = checkAuth(context);
+      try {
+        const post = await Post.findById(postId);
+        if (user.username === post.username) {
+          await post.delete();
+          return 'Post Deleted Successfully';
+        } else {
+          throw new AuthenticationError('Action not allowed');
+        }
+      } catch (err) {
+        throw new Error(err);
+      }
+    },
+    likePost: async (_, { postId }, context) => {
+      const { username } = checkAuth(context);
+
+      const post = await Post.findById(postId);
+      if (post) {
+        if (post.likes.find((like) => like.username === username)) {
+          // Post already likes, unlike it
+          post.likes = post.likes.filter((like) => like.username !== username);
+        } else {
+          post.likes.unshift({
+            username,
+            createdAt: new Date().toISOString(),
+          });
+        }
+        await post.save();
+        return post;
+      } else {
+        throw new UserInputError('Post not found');
+      }
     },
   },
 };
