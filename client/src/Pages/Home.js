@@ -3,7 +3,7 @@ import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import PostCard from '../Components/PostCard';
 
-import { Grid, Image } from 'semantic-ui-react';
+import { Grid } from 'semantic-ui-react';
 import SyncLoader from 'react-spinners/SyncLoader';
 import { css } from '@emotion/core';
 const Home = () => {
