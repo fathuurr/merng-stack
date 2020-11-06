@@ -1,12 +1,16 @@
-import React from 'react';
-import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
-import PostCard from '../Components/PostCard';
+import React, { useContext } from "react";
+import { useQuery } from "@apollo/client";
+import { AuthContext } from "../context/auth";
+import { FETCH_POSTS_QUERY } from "../util/graphql";
 
-import { Grid } from 'semantic-ui-react';
-import SyncLoader from 'react-spinners/SyncLoader';
-import { css } from '@emotion/core';
+import PostCard from "../Components/PostCard";
+import PostForm from "../Components/PostForm";
+
+import { Grid } from "semantic-ui-react";
+import SyncLoader from "react-spinners/SyncLoader";
+import { css } from "@emotion/core";
 const Home = () => {
+  const { user } = useContext(AuthContext);
   const { loading, error, data } = useQuery(FETCH_POSTS_QUERY);
 
   const loadingSpinner = css`
@@ -24,7 +28,7 @@ const Home = () => {
   if (loading) {
     return (
       <div>
-        <SyncLoader size={15} color={'#36D7B7'} css={loadingSpinner} />
+        <SyncLoader size={15} color={"#36D7B7"} css={loadingSpinner} />
       </div>
     );
   }
@@ -35,10 +39,15 @@ const Home = () => {
   const posts = data.getPosts;
   return (
     <Grid columns={3}>
-      <Grid.Row className='page-title'>
+      <Grid.Row className="page-title">
         <h1>Recent Posts</h1>
       </Grid.Row>
       <Grid.Row>
+        {user && (
+          <Grid.Column>
+            <PostForm />
+          </Grid.Column>
+        )}
         {loading ? (
           <h1>Loading Post...</h1>
         ) : (
@@ -53,27 +62,5 @@ const Home = () => {
     </Grid>
   );
 };
-
-const FETCH_POSTS_QUERY = gql`
-  {
-    getPosts {
-      id
-      body
-      createdAt
-      username
-      likeCount
-      likes {
-        username
-      }
-      commentCount
-      comments {
-        id
-        username
-        createdAt
-        body
-      }
-    }
-  }
-`;
 
 export default Home;
