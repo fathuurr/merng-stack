@@ -1,14 +1,14 @@
-import React, { useContext } from "react";
-import { useQuery } from "@apollo/client";
-import { AuthContext } from "../context/auth";
-import { FETCH_POSTS_QUERY } from "../util/graphql";
+import React, { useContext } from 'react';
+import { useQuery } from '@apollo/client';
+import { AuthContext } from '../context/auth';
+import { FETCH_POSTS_QUERY } from '../util/graphql';
 
-import PostCard from "../Components/PostCard";
-import PostForm from "../Components/PostForm";
+import PostCard from '../Components/PostCard';
+import PostForm from '../Components/PostForm';
 
-import { Grid } from "semantic-ui-react";
-import SyncLoader from "react-spinners/SyncLoader";
-import { css } from "@emotion/core";
+import { Grid, Transition } from 'semantic-ui-react';
+import SyncLoader from 'react-spinners/SyncLoader';
+import { css } from '@emotion/core';
 const Home = () => {
   const { user } = useContext(AuthContext);
   const { loading, error, data } = useQuery(FETCH_POSTS_QUERY);
@@ -28,7 +28,7 @@ const Home = () => {
   if (loading) {
     return (
       <div>
-        <SyncLoader size={15} color={"#36D7B7"} css={loadingSpinner} />
+        <SyncLoader size={15} color={'#36D7B7'} css={loadingSpinner} />
       </div>
     );
   }
@@ -39,7 +39,7 @@ const Home = () => {
   const posts = data.getPosts;
   return (
     <Grid columns={3}>
-      <Grid.Row className="page-title">
+      <Grid.Row className='page-title'>
         <h1>Recent Posts</h1>
       </Grid.Row>
       <Grid.Row>
@@ -51,12 +51,14 @@ const Home = () => {
         {loading ? (
           <h1>Loading Post...</h1>
         ) : (
-          posts &&
-          posts.map((post) => (
-            <Grid.Column key={post.id} style={{ marginBottom: 20 }}>
-              <PostCard post={post} />
-            </Grid.Column>
-          ))
+          <Transition.Group>
+            {posts &&
+              posts.map((post) => (
+                <Grid.Column key={post.id} style={{ marginBottom: 20 }}>
+                  <PostCard post={post} />
+                </Grid.Column>
+              ))}
+          </Transition.Group>
         )}
       </Grid.Row>
     </Grid>
