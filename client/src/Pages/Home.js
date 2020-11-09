@@ -11,7 +11,7 @@ import SyncLoader from 'react-spinners/SyncLoader';
 import { css } from '@emotion/core';
 const Home = () => {
   const { user } = useContext(AuthContext);
-  const { loading, error, data } = useQuery(FETCH_POSTS_QUERY);
+  const { loading, error, data, refetch } = useQuery(FETCH_POSTS_QUERY);
 
   const loadingSpinner = css`
     display: flex;
@@ -45,7 +45,7 @@ const Home = () => {
       <Grid.Row>
         {user && (
           <Grid.Column>
-            <PostForm />
+            <PostForm refetch={refetch} />
           </Grid.Column>
         )}
         {loading ? (

@@ -6,25 +6,36 @@ import { FETCH_POSTS_QUERY } from '../util/graphql';
 
 import { Button, Form } from 'semantic-ui-react';
 
-const PostForm = () => {
+const PostForm = ({ refetch }) => {
   const { values, onChange, onSubmit } = useForm(createPostCallback, {
     body: '',
   });
 
-  const [createPost, { error }] = useMutation(CREATE_POST_MUTATION, {
+  const [createPost, { error, loading }] = useMutation(CREATE_POST_MUTATION, {
     variables: values,
     update(proxy, result) {
       const data = proxy.readQuery({
         query: FETCH_POSTS_QUERY,
       });
-      data.getPosts = [result.data.createPost, ...data.getPosts];
-      proxy.writeQuery({ query: FETCH_POSTS_QUERY, data });
+      proxy.writeQuery({
+        query: FETCH_POSTS_QUERY,
+        data: {
+          getPosts: [result.data.createPost, ...data.getPosts],
+        },
+      });
       values.body = '';
     },
+    onError: (err) => {
+      // also add this so the page doesn't break
+      return err;
+    },
   });
-
   function createPostCallback() {
     createPost();
+  }
+
+  if (loading) {
+    return <div> Wait a second ... </div>;
   }
 
   return (
@@ -36,14 +47,15 @@ const PostForm = () => {
             placeholder='Hello .. '
             name='body'
             onChange={onChange}
-            value={values.body}
             error={error ? true : false}
+            value={values.body}
           />
           <Button type='submit' color='teal'>
             Submit
           </Button>
         </Form.Field>
       </Form>
+
       {error && (
         <div className='ui error message' style={{ marginBottom: 20 }}>
           <ul className='list'>

@@ -23,6 +23,7 @@ const SinglePost = (props) => {
     transform: translate(-50%, -50%);
     margin: auto;
   `;
+
   const postId = props.match.params.postId;
   const { user } = useContext(AuthContext);
 
@@ -34,6 +35,10 @@ const SinglePost = (props) => {
 
   if (loading) {
     return <SyncLoader size={15} color={'#36D7B7'} css={loadingSpinner} />;
+  }
+
+  function deletePostCallback() {
+    props.history.push('/');
   }
 
   let postMarkup;
@@ -84,7 +89,7 @@ const SinglePost = (props) => {
                   </Button>
                 </Button>
                 {user && user.username === username && (
-                  <DeleteButton postId={id} />
+                  <DeleteButton postId={id} callback={deletePostCallback} />
                 )}
               </Card.Content>
             </Card>
