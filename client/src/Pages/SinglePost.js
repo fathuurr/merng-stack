@@ -6,6 +6,7 @@ import { FETCH_POST_QUERY, SUBMIT_COMMENT_MUTATION } from '../util/graphql';
 
 import LikeButton from '../Components/LikeButton';
 import DeleteButton from '../Components/DeleteButton';
+import MyPopup from '../util/MyPopup';
 
 import {
   Button,
@@ -97,18 +98,20 @@ const SinglePost = (props) => {
               <hr />
               <Card.Content>
                 <LikeButton user={user} post={{ id, likeCount, likes }} />
-                <Button
-                  as='div'
-                  labelPosition='right'
-                  onClick={() => console.log('Comment on post')}
-                >
-                  <Button basic color='blue'>
-                    <Icon name='comments' />
+                <MyPopup content='Comment on Post'>
+                  <Button
+                    as='div'
+                    labelPosition='right'
+                    onClick={() => console.log('Comment on post')}
+                  >
+                    <Button basic color='blue'>
+                      <Icon name='comments' />
+                    </Button>
+                    <Label basic color='blue' pointing='left'>
+                      {commentCount}
+                    </Label>
                   </Button>
-                  <Label basic color='blue' pointing='left'>
-                    {commentCount}
-                  </Label>
-                </Button>
+                </MyPopup>
                 {user && user.username === username && (
                   <DeleteButton postId={id} callback={deletePostCallback} />
                 )}
@@ -134,8 +137,7 @@ const SinglePost = (props) => {
                         disabled={comment.trim() === ''}
                         onClick={submitComment}
                       >
-                        {' '}
-                        Submit{' '}
+                        Submit
                       </button>
                     </div>
                   </Form>

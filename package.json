@@ -16,8 +16,7 @@
     "graphql": "^15.3.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.10.9",
-    "nodemon": "^2.0.5",
-    "react-spinners": "^0.9.0"
+    "nodemon": "^2.0.5"
   },
   "devDependencies": {
     "eslint": "^7.12.1",
